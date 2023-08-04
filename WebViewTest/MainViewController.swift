@@ -7,23 +7,42 @@
 
 import Foundation
 import UIKit
+import WebKit
 
 class MainViewController: UIViewController {
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
+    var webView1: WKWebView!
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    init() {
+//        super.init(nibName: nil, bundle: nil)
+//    }
+//    
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
-    override func viewWillAppear(_ animated: Bool) {
-        print("viewWillAppear")
-        view.backgroundColor = UIColor.white
-    }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("MainViewController")
-        view.backgroundColor = UIColor.white
+        addSubViews()
+    }
+    
+    
+    private func addSubViews() {
+        let webConfiguration = WKWebViewConfiguration()
+        webView1 = WKWebView(frame: .zero, configuration: webConfiguration)
+        
+        view.addSubview(webView1)
+        
+        
+        NSLayoutConstraint.activate([
+            webView1.topAnchor.constraint(equalTo: view.topAnchor),
+            webView1.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            webView1.leftAnchor.constraint(equalTo: view.leftAnchor),
+            webView1.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+        
+        let url = URL(string:"https://www.apple.com")
+        let request = URLRequest(url: url!)
+        
+        webView1.load(request)
     }
 }
