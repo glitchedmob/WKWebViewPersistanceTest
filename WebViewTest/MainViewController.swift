@@ -10,39 +10,75 @@ import UIKit
 import WebKit
 
 class MainViewController: UIViewController {
-    var webView1: WKWebView!
+    var webViewContainer: UIStackView!
+    lazy var normalWebView: WKWebView = {
+        let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.processPool = WKProcessPool()
+        webConfiguration.websiteDataStore  = WKWebsiteDataStore.default()
+        return WKWebView(frame: .zero, configuration: webConfiguration)
+    }()
     
-//    init() {
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//    
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
+    lazy var privateWebView: WKWebView = {
+        let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.processPool = WKProcessPool()
+        webConfiguration.websiteDataStore  = WKWebsiteDataStore.nonPersistent()
+
+        return WKWebView(frame: .zero, configuration: webConfiguration)
+    }()
     
     
     override func viewDidAppear(_ animated: Bool) {
         addSubViews()
+        
+        setupLayout()
+        
+        loadNormalWebPage()
+        loadPrivateWebPage()
     }
     
     
     private func addSubViews() {
-        let webConfiguration = WKWebViewConfiguration()
-        webView1 = WKWebView(frame: .zero, configuration: webConfiguration)
+        webViewContainer = UIStackView(arrangedSubviews: [privateWebView, normalWebView])
         
-        view.addSubview(webView1)
+        webViewContainer.axis = NSLayoutConstraint.Axis.vertical
+        webViewContainer.distribution = UIStackView.Distribution.fillEqually
+        webViewContainer.alignment = UIStackView.Alignment.fill
+        webViewContainer.spacing = 10.0
         
-        
+        view.addSubview(webViewContainer)
+    }
+    
+    private func loadNormalWebPage() {
+        let url = URL(string:"https://f6gvvn.csb.app")
+        let request = URLRequest(url: url!)
+                
+        normalWebView.load(request)
+    }
+    
+    private func loadPrivateWebPage() {
+        let url = URL(string:"https://f6gvvn.csb.app")
+        let request = URLRequest(url: url!)
+                
+        privateWebView.load(request)
+    }
+    
+    private func setupLayout() {
+        webViewContainer.translatesAutoresizingMaskIntoConstraints = false
+                        
+                        
         NSLayoutConstraint.activate([
-            webView1.topAnchor.constraint(equalTo: view.topAnchor),
-            webView1.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            webView1.leftAnchor.constraint(equalTo: view.leftAnchor),
-            webView1.rightAnchor.constraint(equalTo: view.rightAnchor),
+            webViewContainer.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            webViewContainer.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+            webViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
         
-        let url = URL(string:"https://www.apple.com")
-        let request = URLRequest(url: url!)
-        
-        webView1.load(request)
+//        normalWebView.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            normalWebView.topAnchor.constraint(equalTo: webViewContainer.topAnchor),
+//            normalWebView.bottomAnchor.constraint(equalTo: webViewContainer.bottomAnchor),
+//            normalWebView.leadingAnchor.constraint(equalTo: webViewContainer.leadingAnchor),
+//            normalWebView.trailingAnchor.constraint(equalTo: webViewContainer.trailingAnchor),
+//        ])
     }
 }
